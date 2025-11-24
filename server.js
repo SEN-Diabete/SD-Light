@@ -19,10 +19,13 @@ let GLYCEMIES = [];
 // Middleware
 app.use(express.json());
 app.use(express.static('public'));
+
+// ✅ SESSION SECURISÉE - Positionné ICI
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'sendiabete-secret',
+  secret: process.env.SESSION_SECRET || 'SEN2024!', // 8 caractères
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
 // Sauvegarde données
