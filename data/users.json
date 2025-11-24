@@ -5,7 +5,7 @@
     "email": "admin@sendiabete.sn",
     "password_hash": "$2a$10$8eO3QDBN.a5p7.6q6q1Qe.XYQrYQrYQrYQrYQrYQrYQrYQrYQrYQr",
     "telephone": "781234567",
-    "type_licence": "premium",
+    "type_licence": "premium", 
     "photos_achetees": 9999,
     "photos_utilisees": 0,
     "date_activation": "2024-01-01",
