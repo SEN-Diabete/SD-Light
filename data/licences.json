@@ -1,0 +1,20 @@
+{
+  "essai": {
+    "nom": "Forfait Essai",
+    "prix": 2000,
+    "photos": 30,
+    "duree_jours": 30
+  },
+  "standard": {
+    "nom": "Forfait Standard", 
+    "prix": 15000,
+    "photos": 250,
+    "duree_jours": 180
+  },
+  "premium": {
+    "nom": "Forfait Premium",
+    "prix": 45000,
+    "photos": 1000,
+    "duree_jours": 365
+  }
+}
