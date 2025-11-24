@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - SEN'Diabète</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --secondary: #9b59b6;
+            --accent: #d7bde2;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f5f7fa; 
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .admin-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 968px) {
+            .admin-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .licences-grid {
+            display: grid;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .licence-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .licence-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .licence-card.selected {
+            border-color: var(--primary);
+            background: #f8fff9;
+        }
+        
+        .licence-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+        
+        .licence-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .licence-features {
+            list-style: none;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .identifiants-result {
+            background: #f8fff9;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .credential-field {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .btn-copy {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-active { background: #d4edda; color: #155724; }
+        .badge-expired { background: #f8d7da; color: #721c24; }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="images/logo-SD.png" alt="SEN'Diabète" class="logo">
+                <div>
+                    <h1>Administration SEN'Diabète</h1>
+                    <p>Gestion des médecins et licences</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <span id="userName">Administrateur</span>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistiques -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalMedecins">0</div>
+                <div class="stat-label">Médecins inscrits</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="medecinsActifs">0</div>
+                <div class="stat-label">Médecins actifs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalVentes">0</div>
+                <div class="stat-label">Licences vendues</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="chiffreAffaires">0 Fcfa</div>
+                <div class="stat-label">Chiffre d'affaires</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="photosUtilisees">0</div>
+                <div class="stat-label">Photos analysées</div>
+            </div>
+        </div>
+
+        <div class="admin-sections">
+            <!-- Section Création de compte -->
+            <div class="section">
+                <h2 class="section-title">Créer un nouveau compte</h2>
+                
+                <div class="alert" id="createAlert"></div>
+                
+                <form id="createForm">
+                    <div class="form-group">
+                        <label for="medecin_id">ID Médecin *</label>
+                        <input type="text" id="medecin_id" required placeholder="Ex: MED001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nom_medecin">Nom complet *</label>
+                        <input type="text" id="nom_medecin" required placeholder="Ex: Dr. Marie Diop">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" required placeholder="Ex: marie.diop@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telephone">Téléphone *</label>
+                        <input type="tel" id="telephone" required placeholder="Ex: 771234567">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Type de licence *</label>
+                        <div class="licences-grid" id="licencesGrid">
+                            <!-- Les licences seront injectées ici -->
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="createBtn">
+                        <i class="fas fa-user-plus"></i> Créer le compte
+                    </button>
+                </form>
+                
+                <div class="identifiants-result" id="identifiantsResult">
+                    <h3>✅ Compte créé avec succès</h3>
+                    <p>Identifiants à envoyer au médecin :</p>
+                    
+                    <div class="credential-field">
+                        <strong>ID Médecin:</strong> <span id="resultMedecinId"></span>
+                        <button class="btn-copy" onclick="copyToClipboard('resultMedecinId')">Copier</button>
+                    </div>
+                    
+                    <div class="credential-field">
+                        <strong>Mot de passe:</strong> <span id="resultPassword"></span>
+                        <button class="btn-copy" onclick="copyToClipboard('resultPassword')">Copier</button>
+                    </div>
+                    
+                    <div class="credential-field">
+                        <strong>Type de licence:</strong> <span id="resultLicence"></span>
+                    </div>
+                    
+                    <div class="credential-field">
+                        <strong>Photos incluses:</strong> <span id="resultPhotos"></span>
+                    </div>
+                    
+                    <div class="credential-field">
+                        <strong>Expire le:</strong> <span id="resultExpiration"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Gestion des médecins -->
+            <div class="section">
+                <h2 class="section-title">Médecins inscrits</h2>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Licence</th>
+                                <th>Photos</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="medecinsTable">
+                            <!-- Les données seront injectées ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let licences = {};
+        let selectedLicence = null;
+
+        // Charger les statistiques
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                const stats = await response.json();
+                
+                document.getElementById('totalMedecins').textContent = stats.totalMedecins || 0;
+                document.getElementById('medecinsActifs').textContent = stats.medecinsActifs || 0;
+                document.getElementById('totalVentes').textContent = stats.totalVentes || 0;
+                document.getElementById('chiffreAffaires').textContent = (stats.chiffreAffaires || 0).toLocaleString() + ' Fcfa';
+                document.getElementById('photosUtilisees').textContent = stats.photosUtilisees || 0;
+            } catch (error) {
+                console.error('Erreur chargement stats:', error);
+            }
+        }
+
+        // Charger les licences
+        async function loadLicences() {
+            try {
+                const response = await fetch('/api/admin/licences');
+                licences = await response.json();
+                
+                const grid = document.getElementById('licencesGrid');
+                grid.innerHTML = '';
+                
+                Object.entries(licences).forEach(([key, licence]) => {
+                    const card = document.createElement('div');
+                    card.className = 'licence-card';
+                    card.onclick = () => selectLicence(key, card);
+                    
+                    card.innerHTML = `
+                        <div class="licence-name">${licence.nom}</div>
+                        <div class="licence-price">${licence.prix.toLocaleString()} Fcfa</div>
+                        <ul class="licence-features">
+                            <li>✓ ${licence.photos} analyses incluses</li>
+                            <li>✓ Valide ${licence.duree_jours} jours</li>
+                            <li>✓ Support technique</li>
+                        </ul>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erreur chargement licences:', error);
+            }
+        }
+
+        function selectLicence(key, element) {
+            selectedLicence = key;
+            
+            // Retirer la sélection de toutes les cartes
+            document.querySelectorAll('.licence-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Ajouter la sélection à la carte cliquée
+            element.classList.add('selected');
+        }
+
+        // Charger la liste des médecins
+        async function loadMedecins() {
+            try {
+                const response = await fetch('/api/admin/medecins');
+                const medecins = await response.json();
+                
+                const tbody = document.getElementById('medecinsTable');
+                tbody.innerHTML = '';
+                
+                medecins.forEach(medecin => {
+                    const row = document.createElement('tr');
+                    
+                    const pourcentageUtilise = medecin.pourcentage_utilise || 0;
+                    const statutClass = medecin.statut === 'active' ? 'badge-active' : 'badge-expired';
+                    const statutText = medecin.statut === 'active' ? 'Actif' : 'Expiré';
+                    
+                    row.innerHTML = `
+                        <td>${medecin.medecin_id}</td>
+                        <td>${medecin.nom_medecin}</td>
+                        <td>${licences[medecin.type_licence]?.nom || medecin.type_licence}</td>
+                        <td>${medecin.photos_utilisees}/${medecin.photos_achetees} (${pourcentageUtilise}%)</td>
+                        <td><span class="badge ${statutClass}">${statutText}</span></td>
+                        <td>
+                            <button class="btn-primary" onclick="rechargerMedecin('${medecin.medecin_id}')">
+                                Recharger
+                            </button>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erreur chargement médecins:', error);
+            }
+        }
+
+        // Gestion de la création de compte
+        document.getElementById('createForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!selectedLicence) {
+                showAlert('Veuillez sélectionner un type de licence', 'error');
+                return;
+            }
+            
+            const formData = {
+                medecin_id: document.getElementById('medecin_id').value,
+                nom_medecin: document.getElementById('nom_medecin').value,
+                email: document.getElementById('email').value,
+                telephone: document.getElementById('telephone').value,
+                type_licence: selectedLicence
+            };
+            
+            const button = document.getElementById('createBtn');
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
+            
+            try {
+                const response = await fetch('/api/admin/medecins', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Compte créé avec succès', 'success');
+                    showIdentifiants(result.identifiants);
+                    document.getElementById('createForm').reset();
+                    selectedLicence = null;
+                    document.querySelectorAll('.licence-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    
+                    // Recharger les données
+                    loadStats();
+                    loadMedecins();
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur de création de compte', 'error');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-user-plus"></i> Créer le compte';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('createAlert');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showIdentifiants(identifiants) {
+            document.getElementById('resultMedecinId').textContent = identifiants.medecin_id;
+            document.getElementById('resultPassword').textContent = identifiants.password;
+            document.getElementById('resultLicence').textContent = identifiants.type_licence;
+            document.getElementById('resultPhotos').textContent = identifiants.photos_achetees;
+            document.getElementById('resultExpiration').textContent = identifiants.date_expiration;
+            
+            document.getElementById('identifiantsResult').style.display = 'block';
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copié dans le presse-papier !');
+            });
+        }
+
+        async function rechargerMedecin(medecinId) {
+            const typeLicence = prompt('Type de licence (essai, standard, premium):');
+            if (typeLicence && licences[typeLicence]) {
+                try {
+                    const response = await fetch('/api/admin/recharger', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ medecin_id: medecinId, type_licence: typeLicence })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Rechargement effectué avec succès');
+                        loadStats();
+                        loadMedecins();
+                    } else {
+                        alert('Erreur lors du rechargement');
+                    }
+                } catch (error) {
+                    alert('Erreur de rechargement');
+                }
+            }
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login.html';
+        }
+
+        // Vérifier les permissions admin
+        fetch('/api/session')
+            .then(r => r.json())
+            .then(session => {
+                if (!session.loggedIn || !session.is_admin) {
+                    window.location.href = '/login.html';
+                } else {
+                    loadStats();
+                    loadLicences();
+                    loadMedecins();
+                    
+                    // Actualiser les stats toutes les 30 secondes
+                    setInterval(loadStats, 30000);
+                }
+            });
+    </script>
+</body>
+</html>
